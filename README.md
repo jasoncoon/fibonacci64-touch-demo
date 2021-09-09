@@ -1,1 +1,7 @@
-# fibonacci64-touch-demo
+# Fibonacci64 Touch Demo
+
+Demo Arduino firmware for Fibonacc64 Micro v2 with touch pads
+
+Available for purchase on Tindie here: [https://www.tindie.com/products/23597](https://www.tindie.com/products/23597)
+
+![Fibonacci64 Micro](https://i.imgur.com/L1YCyR1.gif)
