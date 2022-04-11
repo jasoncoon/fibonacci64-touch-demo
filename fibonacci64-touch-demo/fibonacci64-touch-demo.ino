@@ -58,8 +58,8 @@ uint16_t touchRaw[touchPointCount] = { 0, 0, 0, 0 };
 uint8_t touch[touchPointCount] = { 0, 0, 0, 0 };
 
 // coordinates of the touch points
-uint8_t touchPointX[touchPointCount] = { 255, 0, 0, 255 };
-uint8_t touchPointY[touchPointCount] = { 0, 0, 255, 255 };
+uint8_t touchPointX[touchPointCount] = { 127,   0, 127, 255 };
+uint8_t touchPointY[touchPointCount] = {   0, 127, 255, 127 };
 
 boolean activeWaves = false;
 
