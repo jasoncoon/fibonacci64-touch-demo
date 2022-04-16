@@ -25,7 +25,7 @@ FASTLED_USING_NAMESPACE
 #define DATA_PIN      A10
 #define LED_TYPE      WS2812B
 #define COLOR_ORDER   GRB
-#define NUM_LEDS      64
+#define NUM_LEDS      182
 
 #include "Map.h"
 
@@ -34,32 +34,36 @@ FASTLED_USING_NAMESPACE
 
 CRGB leds[NUM_LEDS];
 
-uint8_t brightness = 64;
+uint8_t brightness = 32;
 
 Adafruit_FreeTouch touch0 = Adafruit_FreeTouch(A0, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 Adafruit_FreeTouch touch1 = Adafruit_FreeTouch(A1, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 Adafruit_FreeTouch touch2 = Adafruit_FreeTouch(A2, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 Adafruit_FreeTouch touch3 = Adafruit_FreeTouch(A3, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
+Adafruit_FreeTouch touch4 = Adafruit_FreeTouch(A6, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
+Adafruit_FreeTouch touch5 = Adafruit_FreeTouch(A7, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 
-#define touchPointCount 4
+#define touchPointCount 6
 
 // These values were discovered using the commented-out Serial.print statements in handleTouch below
 
 // minimum values for each touch pad, used to filter out noise
-uint16_t touchMin[touchPointCount] = { 558, 259, 418, 368 };
+uint16_t touchMin[touchPointCount] = { 558, 259, 418, 368, 368, 368 };
 
 // maximum values for each touch pad, used to determine when a pad is touched
-uint16_t touchMax[touchPointCount] = { 1016, 1016, 1016, 1016 };
+uint16_t touchMax[touchPointCount] = { 1016, 1016, 1016, 1016, 1016, 1016 };
 
 // raw capacitive touch sensor readings
-uint16_t touchRaw[touchPointCount] = { 0, 0, 0, 0 };
+uint16_t touchRaw[touchPointCount] = { 0, 0, 0, 0, 0, 0 };
 
 // capacitive touch sensor readings, mapped/scaled one one byte each (0-255)
-uint8_t touch[touchPointCount] = { 0, 0, 0, 0 };
+uint8_t touch[touchPointCount] = { 0, 0, 0, 0, 0, 0 };
 
 // coordinates of the touch points
-uint8_t touchPointX[touchPointCount] = { 127,   0, 127, 255 };
-uint8_t touchPointY[touchPointCount] = {   0, 127, 255, 127 };
+uint8_t touchPointX[touchPointCount] = { 255, 127,   0,   0, 127, 255 };
+uint8_t touchPointY[touchPointCount] = {   0,   0,   0, 255, 255, 255 };
+
+uint8_t touchEnabled[touchPointCount] = { false, false, false, false, false, false };
 
 boolean activeWaves = false;
 
@@ -80,14 +84,12 @@ void setup() {
   Serial.begin(115200);
   //  delay(3000);
 
-  if (!touch0.begin())
-    Serial.println("Failed to begin qt on pin A0");
-  if (!touch1.begin())
-    Serial.println("Failed to begin qt on pin A1");
-  if (!touch2.begin())
-    Serial.println("Failed to begin qt on pin A2");
-  if (!touch3.begin())
-    Serial.println("Failed to begin qt on pin A3");
+  touchEnabled[0] = touch0.begin();
+  touchEnabled[1] = touch1.begin();
+  touchEnabled[2] = touch2.begin();
+  touchEnabled[3] = touch3.begin();
+  touchEnabled[4] = touch4.begin();
+  touchEnabled[5] = touch5.begin();
 
   FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.setDither(false);
@@ -131,11 +133,13 @@ void loop() {
 bool touchChanged = true;
 
 void handleTouch() {
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < touchPointCount; i++) {
     if (i == 0) touchRaw[i] = touch0.measure();
     else if (i == 1) touchRaw[i] = touch1.measure();
     else if (i == 2) touchRaw[i] = touch2.measure();
     else if (i == 3) touchRaw[i] = touch3.measure();
+    else if (i == 4) touchRaw[i] = touch4.measure();
+    else if (i == 5) touchRaw[i] = touch5.measure();
 
     // // uncomment to display raw touch values in the serial monitor/plotter
     //    Serial.print(touchRaw[i]);
