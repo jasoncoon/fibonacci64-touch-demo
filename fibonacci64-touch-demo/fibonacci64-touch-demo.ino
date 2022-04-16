@@ -27,12 +27,25 @@ FASTLED_USING_NAMESPACE
 #define COLOR_ORDER   GRB
 #define NUM_LEDS      182
 
-#include "Map.h"
-
 #define MILLI_AMPS         1400 // IMPORTANT: set the max milli-Amps of your power supply (4A = 4000mA)
-#define FRAMES_PER_SECOND  120
+#define FRAMES_PER_SECOND  1000
 
 CRGB leds[NUM_LEDS];
+
+// Forward declarations of an array of cpt-city gradient palettes, and
+// a count of how many there are.
+extern const TProgmemRGBGradientPalettePtr gGradientPalettes[];
+
+uint8_t gCurrentPaletteNumber = 0;
+
+CRGBPalette16 gCurrentPalette( CRGB::Black);
+CRGBPalette16 gTargetPalette( gGradientPalettes[0] );
+
+// ten seconds per color palette makes a good demo
+// 20-120 is better for deployment
+uint8_t secondsPerPalette = 10;
+
+#include "Map.h"
 
 uint8_t brightness = 32;
 
@@ -67,18 +80,12 @@ uint8_t touchEnabled[touchPointCount] = { false, false, false, false, false, fal
 
 boolean activeWaves = false;
 
-// Forward declarations of an array of cpt-city gradient palettes, and
-// a count of how many there are.
-extern const TProgmemRGBGradientPalettePtr gGradientPalettes[];
+uint8_t offset = 0;
 
-uint8_t gCurrentPaletteNumber = 0;
-
-CRGBPalette16 gCurrentPalette( CRGB::Black);
-CRGBPalette16 gTargetPalette( gGradientPalettes[0] );
-
-// ten seconds per color palette makes a good demo
-// 20-120 is better for deployment
-uint8_t secondsPerPalette = 10;
+#include "vector.h"
+#include "boid.h"
+#include "attractor.h"
+#include "attract.h"
 
 void setup() {
   Serial.begin(115200);
@@ -100,6 +107,8 @@ void setup() {
   FastLED.show();
 
   FastLED.setBrightness(brightness);
+
+  startAttract();
 }
 
 void loop() {
@@ -114,17 +123,19 @@ void loop() {
     gTargetPalette = gGradientPalettes[ gCurrentPaletteNumber ];
   }
 
-  EVERY_N_MILLISECONDS(40) {
+  EVERY_N_MILLISECONDS(30) {
     // slowly blend the current palette to the next
     nblendPaletteTowardPalette( gCurrentPalette, gTargetPalette, 8);
+    offset++;
   }
 
   if (!activeWaves)
-    colorWavesFibonacci();
+    attract();
+    // colorWavesFibonacci();
 
-  touchDemo();
+  // touchDemo();
 
-  FastLED.show();
+  // FastLED.show();
 
   // insert a delay to keep the framerate modest
   FastLED.delay(1000 / FRAMES_PER_SECOND);
@@ -182,33 +193,6 @@ void handleTouch() {
   //
   //    touchChanged = false;
   //  }
-}
-
-// adds a color to a pixel given it's XY coordinates and a "thickness" of the logical pixel
-// since we're using a sparse logical grid for mapping, there isn't an LED at every XY coordinate
-// thickness adds a little "fuzziness"
-void addColorXY(int x, int y, CRGB color, uint8_t thickness = 0)
-{
-  // ignore coordinates outside of our one byte map range
-  if (x < 0 || x > 255 || y < 0 || y > 255) return;
-
-  // loop through all of the LEDs
-  for (uint8_t i = 0; i < NUM_LEDS; i++) {
-    // get the XY coordinates of the current LED
-    uint8_t ix = coordsX[i];
-    uint8_t iy = coordsY[i];
-
-    // are the current LED's coordinates within the square centered
-    // at X,Y, with width and height of thickness?
-    if (ix >= x - thickness && ix <= x + thickness &&
-        iy >= y - thickness && iy <= y + thickness) {
-
-      // add to the color instead of just setting it
-      // so that colors blend
-      // FastLED automatically prevents overflowing over 255
-      leds[i] += color;
-    }
-  }
 }
 
 // algorithm from http://en.wikipedia.org/wiki/Midpoint_circle_algorithm
@@ -320,7 +304,7 @@ void fillWithColorWaves(CRGB* ledarray, uint16_t numleds, CRGBPalette16& palette
   sHue16 += deltams * beatsin88( 400, 5, 9);
   uint16_t brightnesstheta16 = sPseudotime;
 
-  for ( uint16_t i = 0 ; i < numleds; i++) {
+  for ( uint16_t i = 0 ; i < fibonacciCount; i++) {
     hue16 += hueinc16;
     uint8_t hue8 = hue16 / 256;
     uint16_t h16_128 = hue16 >> 7;
@@ -344,9 +328,8 @@ void fillWithColorWaves(CRGB* ledarray, uint16_t numleds, CRGBPalette16& palette
     CRGB newcolor = ColorFromPalette( palette, index, bri8);
 
     uint16_t pixelnumber = i;
-
     if (useFibonacciOrder) pixelnumber = fibonacciToPhysical[i];
-
+    if (pixelnumber >= numleds) continue;
     pixelnumber = (numleds - 1) - pixelnumber;
 
     nblend(ledarray[pixelnumber], newcolor, 128);
