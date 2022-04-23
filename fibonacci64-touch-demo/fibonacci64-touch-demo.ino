@@ -34,7 +34,7 @@ FASTLED_USING_NAMESPACE
 
 CRGB leds[NUM_LEDS];
 
-uint8_t brightness = 64;
+uint8_t brightness = 8;
 
 Adafruit_FreeTouch touch0 = Adafruit_FreeTouch(A0, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 Adafruit_FreeTouch touch1 = Adafruit_FreeTouch(A1, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
@@ -90,7 +90,7 @@ void setup() {
     Serial.println("Failed to begin qt on pin A3");
 
   FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);
-  FastLED.setDither(false);
+  FastLED.setDither(true);
   FastLED.setCorrection(TypicalSMD5050);
   FastLED.setBrightness(brightness);
   FastLED.setMaxPowerInVoltsAndMilliamps(5, MILLI_AMPS);
@@ -122,7 +122,7 @@ void loop() {
 
   touchDemo();
 
-  FastLED.show();
+  // FastLED.show();
 
   // insert a delay to keep the framerate modest
   FastLED.delay(1000 / FRAMES_PER_SECOND);
