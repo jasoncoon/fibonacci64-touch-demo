@@ -122,8 +122,6 @@ void loop() {
 
   touchDemo();
 
-  // FastLED.show();
-
   // insert a delay to keep the framerate modest
   FastLED.delay(1000 / FRAMES_PER_SECOND);
 }
