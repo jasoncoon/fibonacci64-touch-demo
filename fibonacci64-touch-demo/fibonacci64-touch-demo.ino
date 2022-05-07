@@ -34,32 +34,34 @@ FASTLED_USING_NAMESPACE
 
 CRGB leds[NUM_LEDS];
 
-uint8_t brightness = 64;
+uint8_t brightness = 128;
 
 Adafruit_FreeTouch touch0 = Adafruit_FreeTouch(A0, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 Adafruit_FreeTouch touch1 = Adafruit_FreeTouch(A1, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 Adafruit_FreeTouch touch2 = Adafruit_FreeTouch(A2, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 Adafruit_FreeTouch touch3 = Adafruit_FreeTouch(A3, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
+Adafruit_FreeTouch touch4 = Adafruit_FreeTouch(A6, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
+Adafruit_FreeTouch touch5 = Adafruit_FreeTouch(A7, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 
-#define touchPointCount 4
+#define touchPointCount 6
 
 // These values were discovered using the commented-out Serial.print statements in handleTouch below
 
 // minimum values for each touch pad, used to filter out noise
-uint16_t touchMin[touchPointCount] = { 558, 259, 418, 368 };
+uint16_t touchMin[touchPointCount] = { 558, 259, 418, 368, 368, 368 };
 
 // maximum values for each touch pad, used to determine when a pad is touched
-uint16_t touchMax[touchPointCount] = { 1016, 1016, 1016, 1016 };
+uint16_t touchMax[touchPointCount] = { 1016, 1016, 1016, 1016, 1016, 1016 };
 
 // raw capacitive touch sensor readings
-uint16_t touchRaw[touchPointCount] = { 0, 0, 0, 0 };
+uint16_t touchRaw[touchPointCount] = { 0, 0, 0, 0, 0, 0 };
 
 // capacitive touch sensor readings, mapped/scaled one one byte each (0-255)
-uint8_t touch[touchPointCount] = { 0, 0, 0, 0 };
+uint8_t touch[touchPointCount] = { 0, 0, 0, 0, 0, 0 };
 
 // coordinates of the touch points
-uint8_t touchPointX[touchPointCount] = { 127,   0, 127, 255 };
-uint8_t touchPointY[touchPointCount] = {   0, 127, 255, 127 };
+uint8_t touchPointX[touchPointCount] = { 255, 228, 120, 0, 49, 122 };
+uint8_t touchPointY[touchPointCount] = { 151, 46, 0, 132, 238, 255 };
 
 boolean activeWaves = false;
 
@@ -80,6 +82,9 @@ void setup() {
   Serial.begin(115200);
   //  delay(3000);
 
+  pinMode(A6, INPUT);
+  pinMode(A7, INPUT);
+
   if (!touch0.begin())
     Serial.println("Failed to begin qt on pin A0");
   if (!touch1.begin())
@@ -88,6 +93,10 @@ void setup() {
     Serial.println("Failed to begin qt on pin A2");
   if (!touch3.begin())
     Serial.println("Failed to begin qt on pin A3");
+  if (!touch4.begin())
+    Serial.println("Failed to begin qt on pin A6");
+  if (!touch5.begin())
+    Serial.println("Failed to begin qt on pin A7");
 
   FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.setDither(false);
@@ -136,6 +145,8 @@ void handleTouch() {
     else if (i == 1) touchRaw[i] = touch1.measure();
     else if (i == 2) touchRaw[i] = touch2.measure();
     else if (i == 3) touchRaw[i] = touch3.measure();
+    else if (i == 4) touchRaw[i] = touch4.measure();
+    else if (i == 5) touchRaw[i] = touch5.measure();
 
     // // uncomment to display raw touch values in the serial monitor/plotter
     //    Serial.print(touchRaw[i]);
@@ -243,7 +254,7 @@ void drawCircle(int x0, int y0, int radius, const CRGB color, uint8_t thickness 
 const uint8_t waveCount = 8;
 
 // track the XY coordinates and radius of each wave
-uint16_t radii[waveCount];
+uint16_t waveRadii[waveCount];
 uint8_t waveX[waveCount];
 uint8_t waveY[waveCount];
 CRGB waveColor[waveCount];
@@ -257,8 +268,8 @@ void touchDemo() {
 
   for (uint8_t i = 0; i < touchPointCount; i++) {
     // start new waves when there's a new touch
-    if (touch[i] > 127 && radii[i] == 0) {
-      radii[i] = 32;
+    if (touch[i] > 127 && waveRadii[i] == 0) {
+      waveRadii[i] = 32;
       waveX[i] = touchPointX[i];
       waveY[i] = touchPointY[i];
       waveColor[i] = CHSV(random8(), 255, 255);
@@ -269,16 +280,16 @@ void touchDemo() {
 
   for (uint8_t i = 0; i < waveCount; i++)
   {
-    // increment radii if it's already been set in motion
-    if (radii[i] > 0 && radii[i] < maxRadius) radii[i] = radii[i] + 8;
+    // increment waveRadii if it's already been set in motion
+    if (waveRadii[i] > 0 && waveRadii[i] < maxRadius) waveRadii[i] = waveRadii[i] + 8;
 
     // reset waves already at max
-    if (radii[i] >= maxRadius) {
+    if (waveRadii[i] >= maxRadius) {
       activeWaves = true;
-      radii[i] = 0;
+      waveRadii[i] = 0;
     }
 
-    if (radii[i] == 0)
+    if (waveRadii[i] == 0)
       continue;
 
     activeWaves = true;
@@ -289,7 +300,7 @@ void touchDemo() {
     uint8_t y = waveY[i];
 
     // draw waves starting from the corner closest to each touch sensor
-    drawCircle(x, y, radii[i], color, 4);
+    drawCircle(x, y, waveRadii[i], color, 4);
   }
 }
 
