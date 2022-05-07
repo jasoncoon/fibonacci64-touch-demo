@@ -82,9 +82,6 @@ void setup() {
   Serial.begin(115200);
   //  delay(3000);
 
-  pinMode(A6, INPUT);
-  pinMode(A7, INPUT);
-
   if (!touch0.begin())
     Serial.println("Failed to begin qt on pin A0");
   if (!touch1.begin())
@@ -131,8 +128,6 @@ void loop() {
 
   touchDemo();
 
-  FastLED.show();
-
   // insert a delay to keep the framerate modest
   FastLED.delay(1000 / FRAMES_PER_SECOND);
 }
@@ -140,7 +135,7 @@ void loop() {
 bool touchChanged = true;
 
 void handleTouch() {
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < touchPointCount; i++) {
     if (i == 0) touchRaw[i] = touch0.measure();
     else if (i == 1) touchRaw[i] = touch1.measure();
     else if (i == 2) touchRaw[i] = touch2.measure();
@@ -264,7 +259,7 @@ const uint16_t maxRadius = 512;
 void touchDemo() {
   // fade all of the LEDs a small amount each frame
   // increasing this number makes the waves fade faster
-  fadeToBlackBy(leds, NUM_LEDS, 30);
+  fadeToBlackBy(leds, NUM_LEDS, 4);
 
   for (uint8_t i = 0; i < touchPointCount; i++) {
     // start new waves when there's a new touch
@@ -281,7 +276,7 @@ void touchDemo() {
   for (uint8_t i = 0; i < waveCount; i++)
   {
     // increment waveRadii if it's already been set in motion
-    if (waveRadii[i] > 0 && waveRadii[i] < maxRadius) waveRadii[i] = waveRadii[i] + 8;
+    if (waveRadii[i] > 0 && waveRadii[i] < maxRadius) waveRadii[i] = waveRadii[i] + 2;
 
     // reset waves already at max
     if (waveRadii[i] >= maxRadius) {
