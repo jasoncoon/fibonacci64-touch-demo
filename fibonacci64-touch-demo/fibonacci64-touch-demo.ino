@@ -48,7 +48,7 @@ Adafruit_FreeTouch touch5 = Adafruit_FreeTouch(A7, OVERSAMPLE_4, RESISTOR_0, FRE
 // These values were discovered using the commented-out Serial.print statements in handleTouch below
 
 // minimum values for each touch pad, used to filter out noise
-uint16_t touchMin[touchPointCount] = { 558, 259, 418, 368, 368, 368 };
+uint16_t touchMin[touchPointCount] = { 792, 259, 418, 368, 368, 368 };
 
 // maximum values for each touch pad, used to determine when a pad is touched
 uint16_t touchMax[touchPointCount] = { 1016, 1016, 1016, 1016, 1016, 1016 };
@@ -160,8 +160,8 @@ void handleTouch() {
     touch[i] = map(touchRaw[i], touchMin[i], touchMax[i], 0, 255);
 
     // // uncomment to display mapped/scaled touch values in the serial monitor/plotter
-    //    Serial.print(touch[i]);
-    //    Serial.print(" ");
+    // Serial.print(touch[i]);
+    // Serial.print(" ");
   }
 
   // // uncomment to display raw and/or mapped/scaled touch values in the serial monitor/plotter
@@ -169,7 +169,7 @@ void handleTouch() {
 
   // uncomment to display raw, scaled, min, max touch values in the serial monitor/plotter
   //  if (touchChanged) {
-  //    for (uint8_t i = 0; i < 4; i++) {
+  //    for (uint8_t i = 0; i < touchPointCount; i++) {
   //      Serial.print(touchRaw[i]);
   //      Serial.print(" ");
   //      Serial.print(touch[i]);
