@@ -131,7 +131,7 @@ void loop() {
 bool touchChanged = true;
 
 void handleTouch() {
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < touchPointCount; i++) {
     if (i == 0) touchRaw[i] = touch0.measure();
     else if (i == 1) touchRaw[i] = touch1.measure();
     else if (i == 2) touchRaw[i] = touch2.measure();
@@ -163,7 +163,7 @@ void handleTouch() {
 
   // uncomment to display raw, scaled, min, max touch values in the serial monitor/plotter
   //  if (touchChanged) {
-  //    for (uint8_t i = 0; i < 4; i++) {
+  //    for (uint8_t i = 0; i < touchPointCount; i++) {
   //      Serial.print(touchRaw[i]);
   //      Serial.print(" ");
   //      Serial.print(touch[i]);
