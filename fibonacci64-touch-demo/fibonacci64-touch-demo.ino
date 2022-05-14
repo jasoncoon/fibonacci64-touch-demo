@@ -96,7 +96,7 @@ void setup() {
     Serial.println("Failed to begin qt on pin A7");
 
   FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);
-  FastLED.setDither(false);
+  FastLED.setDither(true);
   FastLED.setCorrection(TypicalSMD5050);
   FastLED.setBrightness(brightness);
   FastLED.setMaxPowerInVoltsAndMilliamps(5, MILLI_AMPS);
