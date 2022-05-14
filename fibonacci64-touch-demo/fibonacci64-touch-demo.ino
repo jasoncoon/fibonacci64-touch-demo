@@ -99,7 +99,7 @@ void setup() {
   touchEnabled[5] = touch5.begin();
 
   FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);
-  FastLED.setDither(false);
+  FastLED.setDither(true);
   FastLED.setCorrection(TypicalSMD5050);
   FastLED.setBrightness(brightness);
   FastLED.setMaxPowerInVoltsAndMilliamps(5, MILLI_AMPS);
@@ -134,8 +134,6 @@ void loop() {
     // colorWavesFibonacci();
 
   // touchDemo();
-
-  // FastLED.show();
 
   // insert a delay to keep the framerate modest
   FastLED.delay(1000 / FRAMES_PER_SECOND);
@@ -178,7 +176,7 @@ void handleTouch() {
 
   // uncomment to display raw, scaled, min, max touch values in the serial monitor/plotter
   //  if (touchChanged) {
-  //    for (uint8_t i = 0; i < 4; i++) {
+  //    for (uint8_t i = 0; i < touchPointCount; i++) {
   //      Serial.print(touchRaw[i]);
   //      Serial.print(" ");
   //      Serial.print(touch[i]);
