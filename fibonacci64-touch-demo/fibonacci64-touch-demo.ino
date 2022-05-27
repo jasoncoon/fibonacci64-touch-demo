@@ -48,7 +48,7 @@ Adafruit_FreeTouch touch5 = Adafruit_FreeTouch(A7, OVERSAMPLE_4, RESISTOR_0, FRE
 // These values were discovered using the commented-out Serial.print statements in handleTouch below
 
 // minimum values for each touch pad, used to filter out noise
-uint16_t touchMin[touchPointCount] = { 792, 259, 418, 368, 368, 368 };
+uint16_t touchMin[touchPointCount] = { 792, 259, 418, 368, 368, 792 };
 
 // maximum values for each touch pad, used to determine when a pad is touched
 uint16_t touchMax[touchPointCount] = { 1016, 1016, 1016, 1016, 1016, 1016 };
