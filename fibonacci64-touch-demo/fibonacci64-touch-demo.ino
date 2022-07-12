@@ -25,7 +25,7 @@ FASTLED_USING_NAMESPACE
 #define DATA_PIN      A10
 #define LED_TYPE      WS2812B
 #define COLOR_ORDER   GRB
-#define NUM_LEDS      64
+#define NUM_LEDS      128
 
 #include "Map.h"
 
@@ -342,11 +342,12 @@ void fillWithColorWaves(CRGB* ledarray, uint16_t numleds, CRGBPalette16& palette
     if (useFibonacciOrder) pixelnumber = fibonacciToPhysical[i];
 
     pixelnumber = (numleds - 1) - pixelnumber;
-
+    
     nblend(ledarray[pixelnumber], newcolor, 128);
+    nblend(ledarray[pixelnumber + 64], newcolor, 128);
   }
 }
 
 void colorWavesFibonacci() {
-  fillWithColorWaves(leds, NUM_LEDS, gCurrentPalette, true);
+  fillWithColorWaves(leds, 64, gCurrentPalette, true);
 }
