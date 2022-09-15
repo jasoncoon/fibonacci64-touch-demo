@@ -267,7 +267,7 @@ void touchDemo() {
       waveRadii[i] = 32;
       waveX[i] = touchPointX[i];
       waveY[i] = touchPointY[i];
-      waveColor[i] = CHSV(random8(), 255, 255);
+      waveColor[i] = CHSV(random8(9) * 32, 255, 255);
     }
   }
 
@@ -276,7 +276,7 @@ void touchDemo() {
   for (uint8_t i = 0; i < waveCount; i++)
   {
     // increment waveRadii if it's already been set in motion
-    if (waveRadii[i] > 0 && waveRadii[i] < maxRadius) waveRadii[i] = waveRadii[i] + 2;
+    if (waveRadii[i] > 0 && waveRadii[i] < maxRadius) waveRadii[i] = waveRadii[i] + 4;
 
     // reset waves already at max
     if (waveRadii[i] >= maxRadius) {
