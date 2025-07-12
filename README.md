@@ -1,10 +1,10 @@
 # Fibonacci64 Touch Demo
 
-Demo Arduino firmware for Fibonacci64 Micro v2 with touch pads
+Demo Arduino firmware for 86mm Fibonacci64 WS2812 with touch pads
 
-Available for purchase on Tindie here: [https://www.tindie.com/products/23597](https://www.tindie.com/products/23597)
+Available for purchase on Lectronz here: [https://lectronz.com/products/fibonacci64-86mm-rgb](https://lectronz.com/products/fibonacci64-86mm-rgb)
 
-![Fibonacci64 Micro](f64u.png)
+![Fibonacci64](f64.jpg)
 
 ### Dependencies
 
@@ -17,3 +17,4 @@ Board: Adafruit QT Py (SAMD21)
 Libraries:
 * FastLED v3.5.0: https://github.com/FastLED/FastLED
 * Adafruit FreeTouch Library v1.1.1: https://github.com/adafruit/Adafruit_FreeTouch
+* Button v1.0.0: https://github.com/madleech/Button
