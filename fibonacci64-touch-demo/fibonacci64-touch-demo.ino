@@ -24,10 +24,9 @@
 
 FASTLED_USING_NAMESPACE
 
-#define CLK_PIN       SCK
-#define DATA_PIN      MOSI
-#define LED_TYPE      SK9822
-#define COLOR_ORDER   BGR
+#define DATA_PIN      A10
+#define LED_TYPE      WS2812B
+#define COLOR_ORDER   GRB
 #define NUM_LEDS      64
 
 #include "Map.h"
@@ -63,8 +62,8 @@ uint16_t touchRaw[touchPointCount] = { 0, 0, 0, 0 };
 uint8_t touch[touchPointCount] = { 0, 0, 0, 0 };
 
 // coordinates of the touch points
-uint8_t touchPointX[touchPointCount] = { 255,   0, 0, 255 };
-uint8_t touchPointY[touchPointCount] = { 255, 255, 0,   0 };
+uint8_t touchPointX[touchPointCount] = { 255, 0,   0, 255 };
+uint8_t touchPointY[touchPointCount] = {   0, 0, 255, 255 };
 
 boolean activeWaves = false;
 
