@@ -24,9 +24,10 @@
 
 FASTLED_USING_NAMESPACE
 
-#define DATA_PIN      A10
-#define LED_TYPE      WS2812B
-#define COLOR_ORDER   GRB
+#define CLK_PIN       SCK
+#define DATA_PIN      MOSI
+#define LED_TYPE      SK9822
+#define COLOR_ORDER   BGR
 #define NUM_LEDS      64
 
 #include "Map.h"
@@ -62,8 +63,8 @@ uint16_t touchRaw[touchPointCount] = { 0, 0, 0, 0 };
 uint8_t touch[touchPointCount] = { 0, 0, 0, 0 };
 
 // coordinates of the touch points
-uint8_t touchPointX[touchPointCount] = { 255, 0, 0, 255 };
-uint8_t touchPointY[touchPointCount] = { 0, 0, 255, 255 };
+uint8_t touchPointX[touchPointCount] = { 255,   0, 0, 255 };
+uint8_t touchPointY[touchPointCount] = { 255, 255, 0,   0 };
 
 boolean activeWaves = false;
 
@@ -103,7 +104,7 @@ void setup() {
   if (!touch3.begin())
     Serial.println("Failed to begin qt on pin A3");
 
-  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, DATA_PIN, CLK_PIN, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.setDither(true);
   FastLED.setCorrection(TypicalSMD5050);
   FastLED.setBrightness(brightness);
@@ -118,7 +119,7 @@ void setup() {
 
 void loop() {
   // Add entropy to random number generator; we use a lot of it.
-  random16_add_entropy(random());
+  random16_add_entropy(random(256));
 
   handleTouch();
 
@@ -310,7 +311,7 @@ void touchDemo() {
       radii[i] = 32;
       waveX[i] = touchPointX[i];
       waveY[i] = touchPointY[i];
-      waveColor[i] = CHSV(random8(), 255, 255);
+      waveColor[i] = CHSV(random(256), 255, 255);
     }
   }
 
