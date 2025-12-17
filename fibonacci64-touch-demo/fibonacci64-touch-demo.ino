@@ -43,8 +43,8 @@ uint8_t brightness = 32;
 
 Adafruit_FreeTouch touch0 = Adafruit_FreeTouch(A0, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 Adafruit_FreeTouch touch1 = Adafruit_FreeTouch(A1, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
-Adafruit_FreeTouch touch2 = Adafruit_FreeTouch(A6, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
-Adafruit_FreeTouch touch3 = Adafruit_FreeTouch(A7, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
+Adafruit_FreeTouch touch2 = Adafruit_FreeTouch(A2, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
+Adafruit_FreeTouch touch3 = Adafruit_FreeTouch(A3, OVERSAMPLE_4, RESISTOR_0, FREQ_MODE_NONE);
 
 #define touchPointCount 4
 
@@ -63,7 +63,7 @@ uint16_t touchRaw[touchPointCount] = { 0, 0, 0, 0 };
 uint8_t touch[touchPointCount] = { 0, 0, 0, 0 };
 
 // coordinates of the touch points
-uint8_t touchPointX[touchPointCount] = { 255,   0, 0, 255 };
+uint8_t touchPointX[touchPointCount] = { 255, 0,   0, 255 };
 uint8_t touchPointY[touchPointCount] = { 255, 255, 0,   0 };
 
 boolean activeWaves = false;
